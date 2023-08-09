@@ -17,6 +17,7 @@ pipeline {
             steps {
                 script {
                     def flutterCmd = "${env.FLUTTER_HOME}/bin/flutter"
+                    sh "${flutterCmd} --version" // Check Flutter version to verify Flutter setup
                     sh "${flutterCmd} build apk --debug"
                 }
             }
