@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        APK_OUTPUT_DIR = '/path/to/output/directory'
+         APK_OUTPUT_DIR = "/home/saarthi/Android/flutter/apk"
     }
 
     stages {
