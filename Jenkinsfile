@@ -4,17 +4,10 @@ pipeline {
     environment {
         FLUTTER_HOME = "/home/saarthi/Android/flutter"
         APK_OUTPUT_DIR = "/home/saarthi/Android/flutter/apk" // Specify the output directory for APKs
+        ENABLE_DIAGNOSTICS = "true" // Set this to "true" to enable diagnostics
     }
 
     stages {
-        stage('Set Diagnostics') {
-            steps {
-                script {
-                    System.setProperty("org.jenkinsci.plugins.durabletask.BourneShellScript.LAUNCH_DIAGNOSTICS", "true")
-                }
-            }
-        }
-
         stage('Checkout') {
             steps {
                 checkout scm
@@ -44,6 +37,10 @@ pipeline {
             steps {
                 script {
                     def flutterCmd = "${env.FLUTTER_HOME}/bin/flutter"
+                    if (env.ENABLE_DIAGNOSTICS == "true") {
+                        sh "echo Running tests with diagnostics"
+                        sh "env"
+                    }
                     sh "${flutterCmd} test"
                 }
             }
