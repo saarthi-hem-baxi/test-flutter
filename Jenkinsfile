@@ -2,18 +2,20 @@ pipeline {
     agent any
 
     environment {
-        APK_OUTPUT_DIR = "/home/saarthi/Android/flutter/apk"
+        APK_OUTPUT_DIR = '/path/to/output/directory'
     }
 
     stages {
-        stage('BUILD') {
+        stage('Build Release APK') {
             steps {
                 script {
-                    // Define the output APK path
+                    // Define the output APK path within the script block
                     def apkOutputPath = "${env.APK_OUTPUT_DIR}/app-release.apk"
 
-                    // Build the release APK and move it to the specified output directory
-                    sh "flutter build apk --release --output=$apkOutputPath"
+                    // Execute the Flutter build command using Shell script
+                    sh """
+                    flutter build apk --release --output=$apkOutputPath
+                    """
                 }
             }
         }
