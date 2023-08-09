@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+    options {
+        // Set the custom workspace directory
+        workspace("/home/saarthi")
+    }
+
     environment {
          APK_OUTPUT_DIR = "/home/saarthi/Android/flutter/apk"
     }
