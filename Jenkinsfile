@@ -18,18 +18,17 @@ pipeline {
                     flutter build apk --release --output=$apkOutputPath
                     """
                     
-                    // Check if build error occurred (this is just a placeholder)
-                    if (/* your condition to check build error */) {
+                    // Check if build error occurred
+                    if (currentBuild.resultIsWorseOrEqualTo('FAILURE')) {
                         build_error = true
                     }
 
-                    // Print a message if tests failed
+                    // Print a message if build failed
                     if (build_error) {
-                        echo "TESTS FAILED!"
+                        echo "BUILD FAILED!"
                     }
                 }
             }
         }
     }
 }
-
