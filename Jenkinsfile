@@ -4,66 +4,47 @@ pipeline {
     environment {
         FLUTTER_HOME = "/home/saarthi/Android/flutter"
         APK_OUTPUT_DIR = "/home/saarthi/Android/flutter/apk" // Specify the output directory for APKs
-        JAVA_ARGS = "-Xmx5g -XX:MaxPermSize=512m -Djava.awt.headless=true"
     }
 
     stages {
+        stage('Set Diagnostics') {
+            steps {
+                script {
+                    System.setProperty("org.jenkinsci.plugins.durabletask.BourneShellScript.LAUNCH_DIAGNOSTICS", "true")
+                }
+            }
+        }
+
         stage('Checkout') {
             steps {
-                timeout(time: 15, unit: 'MINUTES') {
-                    checkout scm
-                }
+                checkout scm
             }
         }
 
         stage('Build APK') {
             steps {
-                timeout(time: 15, unit: 'MINUTES') {
-                    script {
-                        def flutterCmd = "${env.FLUTTER_HOME}/bin/flutter"
-                        sh "java ${env.JAVA_ARGS} -jar ${flutterCmd} build apk --debug"
-                    }
+                script {
+                    def flutterCmd = "${env.FLUTTER_HOME}/bin/flutter"
+                    sh "${flutterCmd} --version" // Check Flutter version to verify Flutter setup
+                    sh "${flutterCmd} build apk --debug"
                 }
             }
         }
 
         stage('Save APK') {
             steps {
-                timeout(time: 15, unit: 'MINUTES') {
-                    script {
-                        sh "mkdir -p ${env.APK_OUTPUT_DIR}"
-                        sh "cp build/app/outputs/flutter-apk/app-debug.apk ${env.APK_OUTPUT_DIR}/app-debug-${currentBuild.number}.apk"
-                    }
+                script {
+                    sh "mkdir -p ${env.APK_OUTPUT_DIR}" // Create the output directory if it doesn't exist
+                    sh "cp build/app/outputs/flutter-apk/app-debug.apk ${env.APK_OUTPUT_DIR}/app-debug-${currentBuild.number}.apk"
                 }
             }
         }
 
         stage('Run Tests') {
             steps {
-                timeout(time: 15, unit: 'MINUTES') {
-                    script {
-                        def flutterCmd = "${env.FLUTTER_HOME}/bin/flutter"
-                        sh "java ${env.JAVA_ARGS} -jar ${flutterCmd} test"
-                    }
-                }
-            }
-        }
-
-        stage('TEST') {
-            steps {
-                timeout(time: 15, unit: 'MINUTES') {
-                    sh "java ${env.JAVA_ARGS} -jar flutter test"
-                }
-            }
-        }
-
-        stage('BUILD') {
-            steps {
-                timeout(time: 15, unit: 'MINUTES') {
-                    sh """
-                      #!/bin/sh
-                      java ${env.JAVA_ARGS} -jar flutter build apk --debug
-                    """
+                script {
+                    def flutterCmd = "${env.FLUTTER_HOME}/bin/flutter"
+                    sh "${flutterCmd} test"
                 }
             }
         }
