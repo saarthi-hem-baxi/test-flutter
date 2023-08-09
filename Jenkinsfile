@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        FLUTTER_HOME = "/home/saarthi/Android/flutter" // Set the path to your Flutter installation
-        APK_OUTPUT_PATH = "/home/saarthi/Android/flutter/apk/app-debug.apk" // Set the desired output path for the APK
+        FLUTTER_HOME = "/home/saarthi/Android/flutter"
+        APK_OUTPUT_DIR = "/home/saarthi/Android/flutter/apk" // Specify the output directory for APKs
     }
 
     stages {
@@ -25,7 +25,8 @@ pipeline {
         stage('Save APK') {
             steps {
                 script {
-                    sh "cp build/app/outputs/flutter-apk/app-debug.apk ${env.APK_OUTPUT_PATH}"
+                    sh "mkdir -p ${env.APK_OUTPUT_DIR}" // Create the output directory if it doesn't exist
+                    sh "cp build/app/outputs/flutter-apk/app-debug.apk ${env.APK_OUTPUT_DIR}/app-debug-${currentBuild.number}.apk"
                 }
             }
         }
@@ -42,7 +43,7 @@ pipeline {
 
     post {
         always {
-            archiveArtifacts artifacts: 'build/app/outputs/flutter-apk/*.apk', allowEmptyArchive: true
+            archiveArtifacts artifacts: "${env.APK_OUTPUT_DIR}/*.apk", allowEmptyArchive: true
         }
     }
 }
