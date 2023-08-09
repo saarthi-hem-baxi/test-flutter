@@ -40,6 +40,21 @@ pipeline {
                 }
             }
         }
+
+        stage('TEST') {
+            steps {
+                sh 'flutter test'
+            }
+        }
+
+        stage('BUILD') {
+            steps {
+                sh '''
+                  #!/bin/sh
+                  flutter build apk --debug
+                  '''
+            }
+        }
     }
 
     post {
@@ -48,4 +63,3 @@ pipeline {
         }
     }
 }
-
