@@ -3,53 +3,32 @@ pipeline {
 
     environment {
         FLUTTER_HOME = "/home/saarthi/Android/flutter"
-        APK_OUTPUT_DIR = "/home/saarthi/Android/flutter/apk" // Specify the output directory for APKs
-        ENABLE_DIAGNOSTICS = "true" // Set this to "true" to enable diagnostics
+        APK_OUTPUT_DIR = "/home/saarthi/Android/flutter/apk"
     }
 
     stages {
-        stage('Checkout') {
+        stage('SETUP FLUTTER') {
             steps {
-                checkout scm
+                sh "${env.FLUTTER_HOME}/bin/flutter doctor"
             }
         }
 
-        stage('Build APK') {
+        stage('TEST') {
             steps {
-                script {
-                    def flutterCmd = "${env.FLUTTER_HOME}/bin/flutter"
-                    sh "${flutterCmd} --version" // Check Flutter version to verify Flutter setup
-                    sh "${flutterCmd} build apk --debug"
-                }
+                sh "${env.FLUTTER_HOME}/bin/flutter test"
             }
         }
 
-        stage('Save APK') {
+        stage('BUILD') {
             steps {
                 script {
-                    sh "mkdir -p ${env.APK_OUTPUT_DIR}" // Create the output directory if it doesn't exist
-                    sh "cp build/app/outputs/flutter-apk/app-debug.apk ${env.APK_OUTPUT_DIR}/app-debug-${currentBuild.number}.apk"
+                    // Define the output APK path
+                    def apkOutputPath = "${env.APK_OUTPUT_DIR}/app-debug.apk"
+
+                    // Build the APK
+                    sh "${env.FLUTTER_HOME}/bin/flutter build apk --debug --output=$apkOutputPath"
                 }
             }
-        }
-
-        stage('Run Tests') {
-            steps {
-                script {
-                    def flutterCmd = "${env.FLUTTER_HOME}/bin/flutter"
-                    if (env.ENABLE_DIAGNOSTICS == "true") {
-                        sh "echo Running tests with diagnostics"
-                        sh "env"
-                    }
-                    sh "${flutterCmd} test"
-                }
-            }
-        }
-    }
-
-    post {
-        always {
-            archiveArtifacts artifacts: "${env.APK_OUTPUT_DIR}/*.apk", allowEmptyArchive: true
         }
     }
 }
