@@ -46,7 +46,7 @@ pipeline {
             steps {
                 sh '''
                   #!/bin/sh
-                  flutter build apk --release
+                  sudo flutter build apk --release
                   '''
             }
             post {
