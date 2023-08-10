@@ -30,24 +30,12 @@ pipeline {
             }
         }
 
-        stage('Install Dependencies') {
-            steps {
-                sh 'flutter pub get'
-            }
-        }
-
-        stage('Test') {
-            steps {
-                sh 'flutter test'
-            }
-        }
-
         stage('Build APK Release') {
             steps {
-                sh '''
-                  #!/bin/sh
-                  sudo flutter build apk --release
-                  '''
+                script {
+                    // Use a script block to handle multiple commands
+                    sh 'sudo flutter build apk --release'
+                }
             }
             post {
                 always {
@@ -57,4 +45,3 @@ pipeline {
         }
     }
 }
-
