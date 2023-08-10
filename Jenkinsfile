@@ -19,27 +19,42 @@
 //         }
 //     }
 // }
+
 pipeline {
     agent any
 
-    environment {
-        APK_OUTPUT_DIR = "/home/saarthi/Android/flutter/apk"
-    }
-
     stages {
-        stage('BUILD') {
+        stage('Checkout') {
             steps {
-                script {
-                    // Define the output APK path
-                    def apkOutputPath = "${env.APK_OUTPUT_DIR}/app-release.apk"
+                checkout scm
+            }
+        }
 
-                    // Define the flutter build command
-                    def flutterBuildCommand = "flutter build apk --release --output=$apkOutputPath"
+        stage('Install Dependencies') {
+            steps {
+                sh 'flutter pub get'
+            }
+        }
 
-                    // Use sudo to run the flutter build command
-                    sh "sudo sh -c '${flutterBuildCommand}'"
+        stage('Test') {
+            steps {
+                sh 'flutter test'
+            }
+        }
+
+        stage('Build APK Release') {
+            steps {
+                sh '''
+                  #!/bin/sh
+                  flutter build apk --release
+                  '''
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: 'build/app/outputs/flutter-apk/app-release.apk', allowEmptyArchive: true
                 }
             }
         }
     }
 }
+
