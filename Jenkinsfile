@@ -31,8 +31,8 @@ pipeline {
             steps {
                 script {
                     // Set up Flutter environment
-                    sh "flutter doctor -v"
-                    sh "flutter config --no-analytics"
+                    sh "sudo flutter doctor -v"
+                    sh "sudo flutter config --no-analytics"
                 }
             }
         }
@@ -44,7 +44,7 @@ pipeline {
                     def apkOutputPath = "${env.APK_OUTPUT_DIR}/app-release.apk"
 
                     // Build the release APK and move it to the specified output directory
-                    sh "flutter build apk --release --output=$apkOutputPath"
+                    sh "sudo flutter build apk --release --output=$apkOutputPath"
                 }
             }
         }
